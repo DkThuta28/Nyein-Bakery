@@ -29,6 +29,7 @@ body {
     color: var(--text-secondary);
     font-family: sans-serif;
     transition: background 0.3s;
+    overscroll-behavior-y: contain;
 }
 
 .loading-screen {
