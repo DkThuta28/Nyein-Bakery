@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nyein Bakery App</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-database-compat.js"></script>
+</head>
+
+<body>
+
+    <!-- Loading Screen (Screen 1) -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-screen__text">Nyein Bakery<span id="dots"></span></div>
+    </div>
+
+    <!-- App Container -->
+    <div id="appContainer" class="app-container">
+        <div class="header">
+            <div>
+                <button id="headerBtn" class="header__btn-menu">☰</button>
+            </div>
+            <div class="header__logo">Nyein</div>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <!-- ပြင်ဆင်ချက်- Main Navigation တစ်ခုလုံးကို ID တစ်ခုထဲမှာ စုထားလိုက်ပါတယ် -->
+        <div id="mainNavigationSection">
+            <div class="main-nav">
+                <!-- Cake Order ခလုတ် -->
+                <button id="mainCakeOrderBtn" class="main-nav__btn" onclick="openCakeOrder()">Cake Order</button>
+
+                <!-- Cake Menu ခလုတ် (ဒီနေရာမှာ id="mainCakeMenuBtn" ထည့်ပေးပါ) -->
+                <button id="mainCakeMenuBtn" class="main-nav__btn" onclick="openCakeMenuGrid()">Cake Menu</button>
+            </div>
+        </div>
+
+        <!-- Menu Page (Screen 3) -->
+        <div id="settingMainPage" class="page">
+            <div class="menu-grid">
+                <div class="menu-grid__item" onclick="navigateTo('preferencePage')">
+                    <span class="menu-grid__icon">⚙️</span>
+                    <span class="menu-grid__text">Preference</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preference Page (Screen 4) -->
+        <div id="preferencePage" class="page">
+            <h3 class="page__title">Mood:</h3>
+            <select id="themeSelect" class="preference__select" onchange="changeTheme(this.value)">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+        </div>
+
+        <!-- Cake Order Main Page -->
+        <div id="cakeOrderPage" class="page">
+            <div class="search-bar" style="margin-bottom: 15px;">
+                <input type="text" id="orderSearch" placeholder="Search order with name..." class="preference__select"
+                    style="margin-top:0;">
+            </div>
+            <div style="text-align: right; margin-bottom: 15px;">
+                <button class="btn btn--primary" onclick="navigateTo('createOrderPage')">+ Create New Order</button>
+            </div>
+            <div id="orderListContainer"></div>
+        </div>
+
+        <!-- Create Order Page (ပြင်ဆင်ချက်- Screenshot 2026-05-03 at 14.21.55.jpg အတိုင်း Header အသစ်ထည့်သွင်းခြင်း) -->
+        <div id="createOrderPage" class="page">
+            <div class="custom-header">
+                <button class="icon-box" onclick="navigateTo('cakeOrderPage')">
+                    <span class="back-arrow">←</span>
+                </button>
+                <h2 class="header-title">CREATE NEW ORDER</h2>
+                <button class="icon-box" onclick="saveOrderData()">
+                    <!-- Bookmark icon ပုံစံဖြစ်အောင်ပြောင်းထားပါတယ် -->
+                    <span class="save-icon">🔖</span>
+                </button>
+            </div>
+
+            <form id="orderForm" style="margin-top: 10px;">
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <div id="cakeImagePreview" class="upload-box"
+                        onclick="document.getElementById('cakeImageInput').click()"
+                        style="width: 100px; height: 100px; border: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; border-radius:10px;">
+                        <span id="mainImgPlaceholder">📷</span>
+                    </div>
+                    <input type="file" id="cakeImageInput" hidden accept="image/*"
+                        onchange="handleCakeImageUpload(this)">
+
+                    <div style="flex: 1;">
+                        <label style="font-size: 14px;">Name on Cake:</label>
+                        <input type="text" id="cakeName" placeholder="Enter Name on cake..." class="preference__select"
+                            style="margin-top:5px; border:none; border-bottom:1px solid var(--text-primary); border-radius:0;">
+                    </div>
+                </div>
+
+                <input type="number" id="cakeAge" placeholder="Enter Age on cake..." class="preference__select">
+                <input type="number" id="cakeSize" placeholder="Enter cake Amount..." class="preference__select">
+                <input type="text" id="cakeColor" placeholder="Enter Color of cake..." class="preference__select">
+
+                <label style="display:block; margin-top:15px;">Toy:</label>
+                <input type="file" id="toyInput" hidden onchange="handleToyUpload(this)" accept="image/*">
+                <div id="toyGrid" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                    <div class="upload-box" onclick="document.getElementById('toyInput').click()"
+                        style="width:60px; height:60px; border:1px dashed var(--card-border); display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:8px;">
+                        +
+                    </div>
+                </div>
+
+                <input type="text" id="orderDate" placeholder="DD.MM.YYYY (Order Date)" class="preference__select">
+                <input type="text" id="deliDate" placeholder="DD.MM.YYYY (Deli Date)" class="preference__select">
+
+                <div style="margin-top:15px; display:flex; align-items:center; gap:20px;">
+                    <label>Pre Money:</label>
+                    <label><input type="checkbox" id="preYes"> Yes</label>
+                    <label><input type="checkbox" id="preNo"> No</label>
+                </div>
+
+                <textarea id="cakeDesc" placeholder="Enter description on cake..." class="preference__select"
+                    style="height:100px;"></textarea>
+                <input type="text" id="accName" placeholder="Enter Acc Name..." class="preference__select">
+                <input type="number" id="phNumber" placeholder="Enter Ph Number.." class="preference__select">
+
+                <button type="button" class="btn btn--primary btn--full" onclick="saveOrderData()">SAVE</button>
+            </form>
+        </div>
+
+        <!-- Order Detail Page (ပြင်ဆင်ချက်- Screenshot 2026-05-03 at 14.21.55.jpg အတိုင်း Header ပြောင်းလဲခြင်း) -->
+        <div id="orderDetailPage" class="page">
+            <div class="custom-header">
+                <button class="icon-box" onclick="navigateTo('cakeOrderPage')">
+                    <span class="back-arrow">←</span>
+                </button>
+                <h2 class="header-title">ORDER DETAIL</h2>
+                <button class="icon-box" onclick="openEditPage()">
+                    <span class="edit-icon">✎</span>
+                </button>
+            </div>
+
+            <div class="detail-container">
+                <img id="detailImg" src="" alt="Cake Image" class="main-cake-img" style="display: none;">
+                <h2 id="detailName" class="detail-name"></h2>
+
+                <div class="detail-info-grid">
+                    <div class="detail-row"><strong>Age:</strong> <span id="detailAge"></span></div>
+                    <div class="detail-row"><strong>Size:</strong> <span id="detailSize"></span></div>
+                    <div class="detail-row"><strong>Color:</strong> <span id="detailColor"></span></div>
+                    <div class="detail-row"><strong>Order Date:</strong> <span id="detailOrderDate"></span></div>
+                    <div class="detail-row"><strong>Deli Date:</strong> <span id="detailDeliDate"></span></div>
+                    <div class="detail-row"><strong>Acc Name:</strong> <span id="detailAccName"></span></div>
+                    <div class="detail-row"><strong>Phone:</strong> <span id="detailPhone"></span></div>
+                    <div class="detail-row" style="border-bottom: none;"><strong>Pre Money:</strong> <span
+                            id="detailPreMoney"></span></div>
+                </div>
+
+                <div class="detail-notes-section" style="margin-top: 20px;">
+                    <strong>Description About Cake:</strong>
+                    <p id="detailNotes" style="margin-top: 8px; line-height: 1.5; opacity: 0.8;"></p>
+                </div>
+
+                <div class="toy-section" style="margin-top: 25px;">
+                    <strong>Toys:</strong>
+                    <div id="detailToyList" class="toy-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Order Edit Page (Create Page ရဲ့ format အတိုင်း သီးသန့်ရေးထားတာပါ) -->
+    <div id="orderEditPage" class="page" style="display: none;">
+        <div class="custom-header">
+            <button class="icon-box" onclick="navigateTo('orderDetailPage')">
+                <span class="back-arrow">←</span>
+            </button>
+            <h2 class="header-title">ORDER EDIT</h2>
+            <button class="icon-box" onclick="updateOrderData()">
+                <span class="save-icon">🔖</span>
+            </button>
+        </div>
+
+        <form id="editOrderForm" style="margin-top: 10px; padding: 0 15px;">
+            <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                <div id="edit_cakeImagePreview" class="upload-box"
+                    onclick="document.getElementById('edit_cakeImageInput').click()"
+                    style="width: 100px; height: 100px; border: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; border-radius:10px;">
+                    <span id="edit_mainImgPlaceholder">📷</span>
+                </div>
+                <input type="file" id="edit_cakeImageInput" hidden accept="image/*"
+                    onchange="handleEditImageUpload(this)">
+
+                <div style="flex: 1;">
+                    <label style="font-size: 14px;">Name on Cake:</label>
+                    <input type="text" id="edit_cakeName" placeholder="Enter Name on cake..." class="preference__select"
+                        style="margin-top:5px; border:none; border-bottom:1px solid var(--text-primary); border-radius:0;">
+                </div>
+            </div>
+
+            <input type="number" id="edit_cakeAge" placeholder="Enter Age on cake..." class="preference__select">
+            <input type="number" id="edit_cakeSize" placeholder="Enter cake Amount..." class="preference__select">
+            <input type="text" id="edit_cakeColor" placeholder="Enter Color of cake..." class="preference__select">
+
+            <label style="display:block; margin-top:15px;">Toy:</label>
+            <input type="file" id="edit_toyInput" hidden onchange="handleEditToyUpload(this)" accept="image/*">
+            <div id="edit_toyGrid" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                <!-- နေရာလွတ်ပဲ ထားလိုက်ပါ၊ JS ကနေ ဖြည့်ပေးပါလိမ့်မယ် -->
+            </div>
+
+            <input type="text" id="edit_orderDate" placeholder="DD.MM.YYYY (Order Date)" class="preference__select">
+            <input type="text" id="edit_deliDate" placeholder="DD.MM.YYYY (Deli Date)" class="preference__select">
+
+            <div style="margin-top:15px; display:flex; align-items:center; gap:20px;">
+                <label>Pre Money:</label>
+                <label><input type="checkbox" id="edit_preYes"> Yes</label>
+                <label><input type="checkbox" id="edit_preNo"> No</label>
+            </div>
+
+            <textarea id="edit_cakeDesc" placeholder="Enter description on cake..." class="preference__select"
+                style="height:100px;"></textarea>
+            <input type="text" id="edit_accName" placeholder="Enter Acc Name..." class="preference__select">
+            <input type="number" id="edit_phNumber" placeholder="Enter Ph Number.." class="preference__select">
+
+            <button type="button" class="btn btn--primary btn--full" onclick="updateOrderData()"
+                style="margin-top: 20px; margin-bottom: 30px;">UPDATE</button>
+        </form>
+    </div>
+
+    <!-- Modals & Overlays (မပြောင်းလဲပါ) -->
+    <div id="alertOverlay" class="overlay">
+        <div class="alert-box">
+            <div class="alert-box__icon">✅</div>
+            <h2 class="alert-box__title">ALREADY SAVE!</h2>
+            <button class="btn btn--primary btn--full" onclick="closeAlert()">Ok</button>
+        </div>
+    </div>
+
+    <div id="missAlertOverlay" class="overlay">
+        <div class="alert-box">
+            <div class="alert-box__icon" style="color: #dc3545;">⚠️</div>
+            <h2 class="alert-box__title">Some Date Miss!</h2>
+            <button class="btn btn--primary btn--full"
+                onclick="document.getElementById('missAlertOverlay').style.display='none'">Ok</button>
+        </div>
+    </div>
+
+    <div id="alertOverlay" class="overlay" style="display: none;">
+        <div class="alert-box">
+            <p>Order Updated Successfully!</p>
+            <button onclick="closeAlert(); navigateTo('cakeOrderPage');">OK</button>
+        </div>
+    </div>
+
+    <!-- Custom Confirm Overlay -->
+    <div id="confirmOverlay" class="overlay" style="display: none;">
+        <div class="alert-box">
+            <div class="alert-box__icon" style="color: var(--primary-color);">🗑️</div>
+            <p id="confirmMessage" style="margin-bottom: 20px;">Move to trash can?</p>
+
+            <!-- ခလုတ် ၂ ခုလုံး ပေါ်လာစေမယ့် container -->
+            <div style="display: flex; gap: 10px; width: 100%; flex-direction: row !important;">
+                <button onclick="closeConfirm()"
+                    style="flex: 1; padding: 12px; border-radius: 12px; border: none; background: #f0f0f0; color: #333; cursor: pointer;">
+                    Cancel
+                </button>
+                <button id="confirmYesBtn"
+                    style="flex: 1; padding: 12px; border-radius: 12px; border: none; background: red; color: white; cursor: pointer;">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Cake Menu Main Page -->
+    <div id="cakeMenuGridPage" class="page">
+        <!-- Header Buttons for Menu -->
+        <div class="menu-action-bar">
+            <button id="menuEditBtn" class="menu-btn-secondary" onclick="toggleMenuEditMode()">
+                <span id="menuEditIcon">✎</span> <span id="menuEditText">Edit</span>
+            </button>
+            <button class="main-nav__btn" onclick="prepareCreateNewMenu()">+ Create New Menu</button>
+        </div>
+
+        <!-- Photo Grid -->
+        <div id="cakeMenuGrid" class="cake-menu-grid">
+            <!-- JS will populate images here -->
+        </div>
+    </div>
+
+    <!-- Image View Overlay (ပုံကို အကြီးကြည့်ရန်) -->
+    <div id="menuImageOverlay" class="menu-overlay" onclick="closeMenuFullView()">
+        <img id="menuFullImage" src="" alt="Full View">
+    </div>
+
+
+    <div id="createMenuPage" class="page">
+        <div class="form-container">
+            <h2 style="color: var(--primary-burgundy); text-align: center; margin-bottom: 25px;">Create New Menu</h2>
+
+            <div class="menu-image-upload" onclick="document.getElementById('menuFileInput').click()">
+                <input type="file" id="menuFileInput" hidden accept="image/*" onchange="handleMenuImagePreview(this)">
+                <div id="menuImagePreview" class="preview-box">
+                    <span style="font-size: 50px; margin-bottom: 10px;">📷</span>
+                    <p>Tap to upload cake photo</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 12px;">
+                <button class="btn-save-menu" onclick="uploadMenuData()">Save Menu</button>
+                <button class="btn-cancel-menu" onclick="goBack()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,591 @@
+:root[data-theme="light"] {
+    --bg-color: #ffffff;
+    --text-primary: #800020;
+    --text-secondary: #333333;
+    --card-bg: #ffffff;
+    --card-border: #eeeeee;
+    --btn-secondary: #e0e0e0;
+    --overlay-bg: rgba(0, 0, 0, 0.4);
+}
+
+:root[data-theme="dark"] {
+    --bg-color: #000000;
+    --text-primary: #ff4d6d;
+    --text-secondary: #ffffff;
+    --card-bg: #111111;
+    --card-border: #222222;
+    --btn-secondary: #333333;
+    --overlay-bg: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-secondary);
+    font-family: sans-serif;
+    transition: background 0.3s;
+}
+
+.loading-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-screen__text {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.app-container {
+    display: none;
+    padding: 20px;
+    max-width: 450px;
+    margin: auto;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.header__logo {
+    font-size: 30px;
+    font-weight: bold;
+    color: var(--text-primary);
+    font-style: italic;
+}
+
+.header__btn-menu,
+.header__btn-back {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 5px;
+}
+
+.page {
+    display: none;
+    margin-top: 10px;
+    padding: 0 5px;
+}
+
+.page--active {
+    display: block;
+}
+
+.main-nav {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.main-nav__btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 25px;
+    border: 1px solid var(--card-border);
+    background: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.menu-grid__item {
+    border: 1px solid var(--card-border);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    cursor: pointer;
+    background: var(--card-bg);
+}
+
+.menu-grid__icon {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.order-card {
+    border: 1px solid var(--card-border);
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 15px;
+    position: relative;
+    background: var(--card-bg);
+    cursor: pointer;
+}
+
+.order-card--selected {
+    border: 2px solid var(--text-primary);
+    background: rgba(128, 0, 32, 0.05);
+}
+
+.order-card__title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.order-card__info {
+    font-size: 14px;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+
+.order-card__badges {
+    display: flex;
+    gap: 5px;
+}
+
+.badge {
+    font-size: 10px;
+    border: 1px solid var(--card-border);
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+
+.order-card__delete-icon {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    color: #ff4d4d;
+    cursor: pointer;
+    z-index: 5;
+}
+
+.trash-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    min-height: 40px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn--primary {
+    background: var(--text-primary);
+    color: white;
+}
+
+.btn--secondary {
+    background: var(--btn-secondary);
+    color: var(--text-secondary);
+}
+
+.btn--danger {
+    background: #800020;
+    color: white;
+    display: none;
+}
+
+.btn--full {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.preference__select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+    box-sizing: border-box; /* padding ကြောင့် ဘေးထွက်မသွားအောင် */
+}
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--overlay-bg);
+    backdrop-filter: blur(8px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.alert-box {
+    background: var(--bg-color);
+    padding: 40px;
+    border-radius: 25px;
+    text-align: center;
+    width: 85%;
+    max-width: 320px;
+    border: 1px solid var(--card-border);
+}
+
+.alert-box__icon {
+    font-size: 60px;
+    margin-bottom: 15px;
+    color: #28a745;
+}
+
+/* Cake Order ခလုတ် Active ဖြစ်နေချိန် (ပုံ ၁) */
+.main-nav__btn.btn--active {
+    background-color: var(--text-primary);
+    color: white;
+}
+
+/* Toy Item Design with X icon (ပုံ ၇) */
+.toy-item {
+    position: relative;
+    width: 60px;
+    height: 60px;
+}
+
+.toy-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.toy-remove {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff4d4d;
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* Detail Page Styling */
+.detail-card {
+    padding-bottom: 30px;
+}
+
+.main-cake-img {
+    width: 100%;
+    max-height: 250px;
+    object-fit: cover;
+    border-radius: 15px;
+    margin-bottom: 15px;
+}
+
+.detail-name {
+    font-size: 22px;
+    color: var(--text-primary);
+    margin-bottom: 15px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    font-size: 15px;
+}
+
+.detail-row strong {
+    color: #666;
+}
+
+.toy-section {
+    margin-top: 20px;
+}
+
+.toy-list {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.toy-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+/* Header ကို တစ်တန်းတည်းဖြစ်စေပြီး ဘေးနှစ်ဖက် ကပ်စေရန် */
+.custom-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 10px 0;
+}
+
+/* Header စာသားကို အလယ်ပို့ပြီး အရောင်ပြောင်းရန် */
+.header-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    flex: 1;
+    text-align: center;
+}
+
+/* ခလုတ်ပတ်လည်က box design (ပုံထဲကအတိုင်း) */
+.icon-box {
+    width: 45px;
+    height: 45px;
+    border: 1px solid #e0e0e0; /* ပုံထဲကလို border ဖျော့ဖျော့ */
+    border-radius: 10px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02); /* အနည်းငယ် ကြွတက်နေစေရန် */
+}
+
+/* Icon အရောင်များ */
+.back-arrow, .edit-icon, .save-icon {
+    color: var(--text-primary);
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* Bookmark icon အတွက် သီးသန့် outline style */
+.save-icon {
+    font-size: 20px;
+}
+
+
+/* Cake Menu Page သီးသန့် Style များ */
+.menu-action-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    gap: 10px;
+}
+
+.menu-btn-secondary {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--card-border);
+    background: transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.cake-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 15px;
+}
+
+.cake-menu-item {
+    position: relative;
+    aspect-ratio: 1/1;
+    border-radius: 12px;
+    overflow: visible; /* Delete icon ပေါ်အောင် */
+}
+
+.menu-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* Edit Mode က အနီရောင် X icon (ပုံ ၅ အရ) */
+.menu-delete-trigger {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: white;
+    color: red;
+    border: 2px solid red;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 5;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Full View Overlay */
+.menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+#menuFullImage {
+    max-width: 95%;
+    max-height: 80%;
+    border-radius: 8px;
+}
+
+/* Active ဖြစ်တဲ့ခလုတ် (ရွေးထားတဲ့ Page အတွက်) */
+.main-nav__btn.btn--active {
+    background-color: #800020 !important; /* မင်းရဲ့ မူလခရမ်းရောင် */
+    color: white !important;
+}
+
+/* ရိုးရိုးခလုတ် (မရွေးထားတဲ့ Page အတွက် အဖြူရောင်) */
+.main-nav__btn {
+    background-color: white;
+    color: #333;
+    border: 1px solid #ddd; /* ဘောင်လေးနည်းနည်းပါမှ အဖြူပေါ်မှာ ထင်ရှားမှာပါ */
+    /* ကျန်တဲ့ border-radius တို့ transition တို့ကတော့ မူလအတိုင်း ထားပါ */
+}
+
+:root {
+    --primary-burgundy: #800020; /* မင်းရဲ့ Theme Color အမှန် */
+}
+
+/* Create Menu Page Container */
+.form-container {
+    padding: 25px 20px;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+/* Image Upload Box */
+.menu-image-upload {
+    width: 100%;
+    height: 280px;
+    border: 2px dashed #ccc;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: #fff;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+}
+
+.menu-image-upload:hover {
+    border-color: var(--primary-burgundy);
+}
+
+.preview-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #888;
+}
+
+.preview-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Buttons */
+.btn-save-menu {
+    background-color: var(--primary-burgundy);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn-cancel-menu {
+    background-color: transparent;
+    color: #666;
+    border: 1px solid #ccc;
+    padding: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.alert-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.alert-box {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 300px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.alert-icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+}
+
+.alert-box p {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+.alert-btn {
+    background-color: #800020; /* Burgundy */
+    color: white;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+}
