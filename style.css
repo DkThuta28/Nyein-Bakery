@@ -2,7 +2,7 @@
     --bg-color: #ffffff;
     --text-primary: #800020;
     --text-secondary: #333333;
-    --card-bg: #ffffff;
+    --card-bg: rgba(255, 255, 255, 0.1);
     --card-border: #eeeeee;
     --btn-secondary: #e0e0e0;
     --overlay-bg: rgba(0, 0, 0, 0.4);
